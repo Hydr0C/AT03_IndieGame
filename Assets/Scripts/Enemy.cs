@@ -18,6 +18,8 @@ public class Enemy : MonoBehaviour
     //Define all necessary variables
     private NavMeshAgent agent;
 
+    public Notes noteScript;
+
     [SerializeField] GameObject player;
 
     //List of Waypoints for Patrol + other needed variables
@@ -106,6 +108,10 @@ public class Enemy : MonoBehaviour
                 //Debug.Log("Can see player");
                 instance.StateMachine.SetState(new ChaseState(instance));
             }
+            else if(instance.noteScript.endGame)
+            {
+                instance.StateMachine.SetState(new ChaseState(instance));
+            }
             else
             {
                 //Debug.Log("setting desti");
@@ -156,6 +162,10 @@ public class Enemy : MonoBehaviour
                 //If within range of the player, AI will being chasing
                 instance.StateMachine.SetState(new ChaseState(instance));
             }
+            else if (instance.noteScript.endGame)
+            {
+                instance.StateMachine.SetState(new ChaseState(instance));
+            }
             else if (instance.timer <= 1)
             {
                 instance.StateMachine.SetState(new MoveState(instance));
@@ -194,7 +204,15 @@ public class Enemy : MonoBehaviour
             }
             else
             {
-                instance.StateMachine.SetState(new IdleState(instance));
+                if (!instance.noteScript.endGame)
+                {
+                    instance.StateMachine.SetState(new IdleState(instance));
+                }
+                else if(instance.noteScript.endGame)
+                {
+                    instance.agent.SetDestination(instance.player.transform.position);
+                }
+                
             }
         }
 

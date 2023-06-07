@@ -86,12 +86,14 @@ public class Player : MonoBehaviour
 
     public void OnSprint()
     {
-        if(!isRunning)
+       if(Input.anyKeyDown && !isRunning)
         {
+            Debug.Log("Running");
             isRunning = true;
         }
-        else
+        else if(!Input.anyKeyDown && isRunning)
         {
+            Debug.Log("Not Running");
             isRunning = false;
         }
     }
@@ -128,6 +130,10 @@ public class Player : MonoBehaviour
                 noteScript.notesCollected++;
                 GameObject gameObject1 = hit.collider.gameObject;
                 gameObject1.SetActive(false);
+            }
+            else if(hit.collider.gameObject.tag == "Exit")
+            {
+                Debug.Log("door");
             }
         }
     }

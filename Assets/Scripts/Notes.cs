@@ -16,18 +16,28 @@ public class Notes : MonoBehaviour
     public int notesCollected = 0;
     private int totalNotes;
 
-    [SerializeField]TMP_Text showText;
+    public bool endGame;
+
+    [SerializeField]TMP_Text notesText, endgameText;
 
     // Start is called before the first frame update
     void Start()
     {
+        endGame = false;
         totalNotes = notes.Length;
-        showText.text = notesCollected + " / " + totalNotes;
+        notesText.text = notesCollected + " / " + totalNotes;
+        endgameText.enabled = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        showText.text = notesCollected + " / " + totalNotes;
+        notesText.text = notesCollected + " / " + totalNotes;
+        if(notesCollected == totalNotes)
+        {
+            Debug.Log("Endgame Entered");
+            endGame = true;
+            endgameText.enabled = true;
+        }
     }
 }
