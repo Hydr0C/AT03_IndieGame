@@ -16,9 +16,13 @@ public class MenuManager : MonoBehaviour
     {
         SceneManager.LoadScene("Game");
     }
-    public void EndGame()
+    public void CloseGame()
     {
         Application.Quit();
         Debug.Log("Game Ended");
+    }
+    public void GameOver()
+    {
+        SceneManager.LoadScene("EndGame");
     }
 }

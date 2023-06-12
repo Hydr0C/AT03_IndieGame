@@ -19,8 +19,10 @@ public class Enemy : MonoBehaviour
     private NavMeshAgent agent;
 
     public Notes noteScript;
+    public Player playerScript;
 
     [SerializeField] GameObject player;
+    public MenuManager menuManager;
 
     //List of Waypoints for Patrol + other needed variables
     public Transform[] waypoints;
@@ -37,6 +39,7 @@ public class Enemy : MonoBehaviour
         timerMax;
 
     private float timer;
+    private bool hitPlayer;
 
     public StateMachine StateMachine { get; private set; } //Get the state machine 
 
@@ -62,6 +65,16 @@ public class Enemy : MonoBehaviour
     void Update()
     {
         StateMachine.OnUpdate(); // does the stuff we set up in enemy states script
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        Debug.Log("HIT SMTH");
+        if (collision.gameObject.tag == "Player")
+        {
+            Debug.Log("it was the player");
+            hitPlayer = true;
+        }
     }
 
     public abstract class EnemyMoveState : IState //Set up a state that will act as a folder
@@ -212,7 +225,15 @@ public class Enemy : MonoBehaviour
                 {
                     instance.agent.SetDestination(instance.player.transform.position);
                 }
-                
+            }
+            if(instance.hitPlayer)
+            {
+                Debug.Log("get rekt");
+                instance.menuManager.GameOver();
+            }
+            if(instance.playerScript.attack)
+            {
+                instance.StateMachine.SetState(new StunState(instance));
             }
         }
 
@@ -227,6 +248,27 @@ public class Enemy : MonoBehaviour
         public StunState(Enemy _instance) : base(_instance)
         { }
 
+        public override void OnEnter()
+        {
+            Debug.Log("ouchies im stunned");
+            instance.timer = 3.5f;
+            instance.agent.isStopped = true;
+        }
+
+        public override void OnUpdate()
+        {
+            if(instance.timer >= 0f)
+            {
+                //play animation stunned
+                instance.timer -= Time.deltaTime;
+            }
+            else if(instance.timer <= 0f)
+            {
+                instance.playerScript.attack = false;
+                Debug.Log("attack = " + instance.playerScript.attack);
+                instance.StateMachine.SetState(new IdleState(instance));
+            }
+        }
     }
 
     private void OnDrawGizmos()

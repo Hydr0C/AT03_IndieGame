@@ -18,6 +18,8 @@ public class Player : MonoBehaviour
     private PlayerControls _playerControls;
 
     public Notes noteScript;
+    public MenuManager menuManager;
+    public GameObject cameraView;
 
     [SerializeField]
     float walkSpeed = 10f,  //speed at which player will walk
@@ -30,6 +32,9 @@ public class Player : MonoBehaviour
 
     private bool isRunning = false;
     private bool isGround = true;
+    private bool gameWon = false;
+    private bool gameEnd = false;
+    public bool attack = false;
 
 
     Vector2 moveInput; //new input system uses vector 2s
@@ -54,6 +59,10 @@ public class Player : MonoBehaviour
         Movin();
         stamNormal = stamina / 100f;
         staminaBar.fillAmount = stamNormal;
+        if(gameEnd)
+        {
+            menuManager.GameOver();
+        }
     }
 
     private void Movin()
@@ -86,14 +95,12 @@ public class Player : MonoBehaviour
 
     public void OnSprint()
     {
-       if(Input.anyKeyDown && !isRunning)
+       if(!isRunning)
         {
-            Debug.Log("Running");
             isRunning = true;
         }
-        else if(!Input.anyKeyDown && isRunning)
+        else if(isRunning)
         {
-            Debug.Log("Not Running");
             isRunning = false;
         }
     }
@@ -113,13 +120,18 @@ public class Player : MonoBehaviour
         {
             isGround = true;
         }
+        if(collision.gameObject.tag == "Finish" && noteScript.endGame)
+        {
+            gameWon = true;
+            gameEnd = true;
+        }
     }
 
     public void OnInteract()
     {
         Debug.Log("interacting");
         RaycastHit hit;
-        Ray ray = new Ray(transform.position, transform.TransformDirection(Vector3.forward));
+        Ray ray = new Ray(cameraView.transform.position, cameraView.transform.TransformDirection(Vector3.forward));
 
         if (Physics.Raycast(ray, out hit, 10))
         {
@@ -131,9 +143,10 @@ public class Player : MonoBehaviour
                 GameObject gameObject1 = hit.collider.gameObject;
                 gameObject1.SetActive(false);
             }
-            else if(hit.collider.gameObject.tag == "Exit")
+            else if(hit.collider.gameObject.tag == "Enemy")
             {
-                Debug.Log("door");
+                Debug.Log("pew pew");
+                attack = true;
             }
         }
     }
