@@ -18,6 +18,8 @@ public class Enemy : MonoBehaviour
     //Define all necessary variables
     private NavMeshAgent agent;
 
+    private Animator animC;
+
     public Notes noteScript;
     public Player playerScript;
 
@@ -53,6 +55,7 @@ public class Enemy : MonoBehaviour
         }
 
         // get Animator component
+        animC = GetComponentInChildren<Animator>(); 
     }
 
     void Start()
@@ -106,6 +109,7 @@ public class Enemy : MonoBehaviour
             instance.agent.isStopped = false;
 
             //Set animator to walk
+            instance.animC.SetTrigger("Walk");
 
             instance.agent.speed = instance.walkSpeed;
         }
@@ -147,6 +151,7 @@ public class Enemy : MonoBehaviour
         public override void OnExit()
         {
             //reset animation
+            instance.animC.ResetTrigger("Walk");
         }
     }
 
@@ -163,6 +168,7 @@ public class Enemy : MonoBehaviour
             instance.agent.isStopped = true;
 
             //set animation to idle
+            instance.animC.SetTrigger("Idle");
 
             instance.timer = r.Next(instance.timerMin, instance.timerMax);
         }
@@ -192,6 +198,7 @@ public class Enemy : MonoBehaviour
         public override void OnExit()
         {
             //reset animation
+            instance.animC.ResetTrigger("Idle");
         }
     }
 
@@ -207,6 +214,7 @@ public class Enemy : MonoBehaviour
             instance.agent.speed = instance.runSpeed;
 
             //set animation to run
+            instance.animC.SetTrigger("Run");
         }
 
         public override void OnUpdate()
@@ -217,15 +225,16 @@ public class Enemy : MonoBehaviour
             }
             else
             {
-                if (!instance.noteScript.endGame)
-                {
-                    instance.StateMachine.SetState(new IdleState(instance));
-                }
-                else if(instance.noteScript.endGame)
+                if(instance.noteScript.endGame)
                 {
                     instance.agent.SetDestination(instance.player.transform.position);
                 }
+                else if (!instance.noteScript.endGame)
+                {
+                    instance.StateMachine.SetState(new IdleState(instance));
+                }
             }
+
             if(instance.hitPlayer)
             {
                 Debug.Log("get rekt");
@@ -240,6 +249,7 @@ public class Enemy : MonoBehaviour
         public override void OnExit()
         {
             //reset animations
+            instance.animC.ResetTrigger("Run");
         }
     }
 
@@ -253,6 +263,8 @@ public class Enemy : MonoBehaviour
             Debug.Log("ouchies im stunned");
             instance.timer = 3.5f;
             instance.agent.isStopped = true;
+
+            instance.animC.SetTrigger("Stun");
         }
 
         public override void OnUpdate()
@@ -268,6 +280,11 @@ public class Enemy : MonoBehaviour
                 Debug.Log("attack = " + instance.playerScript.attack);
                 instance.StateMachine.SetState(new IdleState(instance));
             }
+        }
+
+        public override void OnExit()
+        {
+            instance.animC.ResetTrigger("Stun");
         }
     }
 

@@ -42,9 +42,9 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Torch",
+                    "name": "Pause",
                     "type": "Button",
-                    "id": "acf4a0ab-9ff4-437c-ac28-0a176d70cd4f",
+                    "id": "09e939dd-a724-4d9d-a7f8-ee8a1bb21c99",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -219,12 +219,12 @@
                 },
                 {
                     "name": "",
-                    "id": "557e584d-c0d1-4eeb-9369-d6d9e9454516",
+                    "id": "b0452573-0f10-427f-ad6d-ef59a0dfe651",
                     "path": "<Keyboard>/tab",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
-                    "action": "Torch",
+                    "action": "Pause",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

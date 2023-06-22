@@ -19,7 +19,8 @@ public class Player : MonoBehaviour
 
     public Notes noteScript;
     public MenuManager menuManager;
-    public GameObject cameraView;
+    public GameObject cameraView,
+        pauseMenu;
 
     [SerializeField]
     float walkSpeed = 10f,  //speed at which player will walk
@@ -32,7 +33,6 @@ public class Player : MonoBehaviour
 
     private bool isRunning = false;
     private bool isGround = true;
-    private bool gameWon = false;
     private bool gameEnd = false;
     public bool attack = false;
 
@@ -51,17 +51,15 @@ public class Player : MonoBehaviour
         rBody = GetComponent<Rigidbody>(); //makes sure we got the rigid body
 
         stamNormal = stamina / 100f;
-        staminaBar.fillAmount = stamNormal;
     }
 
     private void Update()
     {
         Movin();
         stamNormal = stamina / 100f;
-        staminaBar.fillAmount = stamNormal;
         if(gameEnd)
         {
-            menuManager.GameOver();
+            menuManager.GameWon();
         }
     }
 
@@ -73,7 +71,7 @@ public class Player : MonoBehaviour
             if(stamina > 0f)
             {
                 speed = runSpeed;
-                stamina = stamina - Time.deltaTime;
+                stamina = stamina - (Time.deltaTime * 2);
             }
             else
             {
@@ -122,7 +120,6 @@ public class Player : MonoBehaviour
         }
         if(collision.gameObject.tag == "Finish" && noteScript.endGame)
         {
-            gameWon = true;
             gameEnd = true;
         }
     }
@@ -133,7 +130,7 @@ public class Player : MonoBehaviour
         RaycastHit hit;
         Ray ray = new Ray(cameraView.transform.position, cameraView.transform.TransformDirection(Vector3.forward));
 
-        if (Physics.Raycast(ray, out hit, 10))
+        if (Physics.Raycast(ray, out hit, 20))
         {
             Debug.Log("Raycast hit smth");
             if (hit.collider.gameObject.tag == "Note")
@@ -149,6 +146,13 @@ public class Player : MonoBehaviour
                 attack = true;
             }
         }
+    }
+
+    public void OnPause()
+    {
+        Time.timeScale = 0;
+        Cursor.lockState = CursorLockMode.None;
+        pauseMenu.SetActive(true);
     }
 
     private void OnDisable()

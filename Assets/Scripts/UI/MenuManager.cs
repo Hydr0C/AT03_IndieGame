@@ -15,6 +15,13 @@ public class MenuManager : MonoBehaviour
     public void SwitchSceneGame()
     {
         SceneManager.LoadScene("Game");
+        Time.timeScale = 1;
+        Cursor.lockState = CursorLockMode.Locked;
+    }
+    public void SwitchSceneMenu()
+    {
+        Cursor.lockState = CursorLockMode.None;
+        SceneManager.LoadScene("MainMenu");
     }
     public void CloseGame()
     {
@@ -23,6 +30,19 @@ public class MenuManager : MonoBehaviour
     }
     public void GameOver()
     {
-        SceneManager.LoadScene("EndGame");
+        Cursor.lockState = CursorLockMode.None;
+        SceneManager.LoadScene("Lost");
+    }
+
+    public void GameWon()
+    {
+        Cursor.lockState = CursorLockMode.None;
+        SceneManager.LoadScene("Won");
+    }
+
+    public void PlayGame()
+    {
+        Time.timeScale = 1;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 }
